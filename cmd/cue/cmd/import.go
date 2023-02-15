@@ -267,6 +267,7 @@ Example:
 // TODO: factor out rooting of orphaned files.
 
 func runImport(cmd *Command, args []string) (err error) {
+	// What is this for?
 	c := &config{
 		fileFilter:     `\.(json|yaml|yml|jsonl|ldjson)$`,
 		interpretation: build.Auto,
@@ -477,7 +478,7 @@ func handleFile(b *buildPlan, f *ast.File) (err error) {
 		h := hoister{fields: map[string]bool{}}
 		h.hoist(f)
 	}
-
+	
 	return writeFile(b, f, cueFile)
 }
 

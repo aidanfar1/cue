@@ -155,11 +155,11 @@ Leaks:  11
 Freed:  120
 Reused: 113
 Allocs: 18
-Retain: 69
+Retain: 51
 
 Unifications: 127
 Conjuncts:    313
-Disjuncts:    175
+Disjuncts:    157
 -- out/eval --
 Errors:
 listEmbed.b6: invalid list index 5 (out of bounds):

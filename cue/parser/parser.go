@@ -872,7 +872,7 @@ func (p *parser) parseField() (decl ast.Decl) {
 	// allowComprehension = false
 
 	switch p.tok {
-	case token.COLON:
+	case token.COLON, token.ISA:
 	case token.COMMA:
 		p.expectComma() // sync parser.
 		fallthrough
@@ -898,18 +898,22 @@ func (p *parser) parseField() (decl ast.Decl) {
 
 	m.TokenPos = p.pos
 	m.Token = p.tok
-	if p.tok != token.COLON {
-		p.errorExpected(pos, "':'")
+	if p.tok == token.ISA {
+		p.assertV0(p.pos, 2, 0, "'::'")
 	}
-	p.next() // :
+	if p.tok != token.COLON && p.tok != token.ISA {
+		p.errorExpected(pos, "':' or '::'")
+	}
+	p.next() // : or ::
 
 	for {
 		if l, ok := m.Label.(*ast.ListLit); ok && len(l.Elts) != 1 {
 			p.errf(l.Pos(), "square bracket must have exactly one element")
 		}
 
+		tok := p.tok
 		label, expr, _, ok := p.parseLabel(true)
-		if !ok || (p.tok != token.COLON && p.tok != token.OPTION) {
+		if !ok || (p.tok != token.COLON && p.tok != token.ISA && p.tok != token.OPTION) {
 			if expr == nil {
 				expr = p.parseRHS()
 			}
@@ -920,18 +924,21 @@ func (p *parser) parseField() (decl ast.Decl) {
 		m.Value = &ast.StructLit{Elts: []ast.Decl{field}}
 		m = field
 
-		if p.tok == token.OPTION {
+		if tok != token.LSS && p.tok == token.OPTION {
 			m.Optional = p.pos
 			p.next()
 		}
 
 		m.TokenPos = p.pos
 		m.Token = p.tok
-		if p.tok != token.COLON {
+		if p.tok == token.ISA {
+			p.assertV0(p.pos, 2, 0, "'::'")
+		}
+		if p.tok != token.COLON && p.tok != token.ISA {
 			if p.tok.IsLiteral() {
-				p.errf(p.pos, "expected ':'; found %s", p.lit)
+				p.errf(p.pos, "expected ':' or '::'; found %s", p.lit)
 			} else {
-				p.errf(p.pos, "expected ':'; found %s", p.tok)
+				p.errf(p.pos, "expected ':' or '::'; found %s", p.tok)
 			}
 			break
 		}
@@ -1089,7 +1096,7 @@ func (p *parser) parseComprehensionClauses(first bool) (clauses []ast.Clause, c 
 			forPos := p.expect(token.FOR)
 			if first {
 				switch p.tok {
-				case token.COLON, token.BIND, token.OPTION,
+				case token.COLON, token.ISA, token.BIND, token.OPTION,
 					token.COMMA, token.EOF:
 					return nil, c
 				}
@@ -1119,7 +1126,7 @@ func (p *parser) parseComprehensionClauses(first bool) (clauses []ast.Clause, c 
 			ifPos := p.expect(token.IF)
 			if first {
 				switch p.tok {
-				case token.COLON, token.BIND, token.OPTION,
+				case token.COLON, token.ISA, token.BIND, token.OPTION,
 					token.COMMA, token.EOF:
 					return nil, c
 				}
@@ -1611,6 +1618,7 @@ func (p *parser) parseFile() *ast.File {
 
 	var decls []ast.Decl
 
+	// DarshanNote Adding attibuted to AST.File
 	for p.tok == token.ATTRIBUTE {
 		decls = append(decls, p.parseAttribute())
 		p.consumeDeclComma()

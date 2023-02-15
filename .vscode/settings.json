@@ -1,0 +1,4 @@
+{
+  "ValidateUsingTestRolloutInfra": true,
+  "ValidateUsingProdRolloutInfra": true
+}

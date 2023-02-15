@@ -26,9 +26,6 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/errors"
 	"cuelang.org/go/cue/token"
-	"cuelang.org/go/internal/core/adt"
-	"cuelang.org/go/internal/encoding"
-	"cuelang.org/go/internal/filetypes"
 )
 
 // TODO: commands
@@ -45,38 +42,15 @@ import (
 
 type runFunction func(cmd *Command, args []string) error
 
-func statsEncoder(cmd *Command) *encoding.Encoder {
-	file := os.Getenv("CUE_STATS_FILE")
-	if file == "" {
-		return nil
-	}
-
-	stats, err := filetypes.ParseFile(file, filetypes.Export)
-	exitOnErr(cmd, err, true)
-
-	statsEnc, err := encoding.NewEncoder(stats, &encoding.Config{
-		Stdout: cmd.OutOrStderr(),
-		Force:  true,
-	})
-	exitOnErr(cmd, err, true)
-
-	return statsEnc
-}
-
 func mkRunE(c *Command, f runFunction) func(*cobra.Command, []string) error {
+	// TODO 7 Cobra.execute calls here with the correct function needed to run 
+	// (i.e. pass export function if using export)
 	return func(cmd *cobra.Command, args []string) error {
 		c.Command = cmd
-
-		statsEnc := statsEncoder(c)
-
+		// TODO 8 Run the CUE command 'f' (e.g. Export)
 		err := f(c, args)
 		if err != nil {
 			exitOnErr(c, err, true)
-		}
-
-		if statsEnc != nil {
-			statsEnc.Encode(c.ctx.Encode(adt.TotalStats()))
-			statsEnc.Close()
 		}
 		return err
 	}
@@ -159,7 +133,7 @@ func MainTest() int {
 	return Main()
 }
 
-// Main runs the cue tool and returns the code for passing to os.Exit.
+// TODO 2 Main runs the cue tool and returns the code for passing to os.Exit.
 func Main() int {
 	cwd, _ := os.Getwd()
 	err := mainErr(context.Background(), os.Args[1:])
@@ -175,11 +149,14 @@ func Main() int {
 	return 0
 }
 
+// TODO 3 Passes CUE arguments and an empty context
 func mainErr(ctx context.Context, args []string) error {
+	// TODO 4 Create an instance of Command which contains multiple cobra commands
 	cmd, err := New(args)
 	if err != nil {
 		return err
 	}
+	// TODO 5 Run the command
 	return cmd.Run(ctx)
 }
 
@@ -242,7 +219,7 @@ func (c *Command) Run(ctx context.Context) (err error) {
 	// - help
 	// For the latter two, we need to use the default loading.
 	defer recoverError(&err)
-
+	// TODO 6 Run the Cobra command
 	if err := c.root.Execute(); err != nil {
 		return err
 	}

@@ -96,11 +96,11 @@ Leaks:  16
 Freed:  32
 Reused: 26
 Allocs: 22
-Retain: 23
+Retain: 18
 
 Unifications: 40
 Conjuncts:    61
-Disjuncts:    53
+Disjuncts:    48
 -- out/eval --
 Errors:
 c: invalid list index "3" (type string):

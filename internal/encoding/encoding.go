@@ -123,6 +123,7 @@ func valueToFile(v cue.Value) *ast.File {
 	return internal.ToFile(v.Syntax())
 }
 
+// TODO Converts CUE file to ast.File
 func (i *Decoder) File() *ast.File {
 	if i.file != nil {
 		return i.file
@@ -422,7 +423,8 @@ func (v *validator) validate(n ast.Node) bool {
 		check(n, i.Imports, "imports", true)
 
 	case *ast.Field:
-		check(n, i.Definitions, "definitions", internal.IsDefinition(x.Label))
+		check(n, i.Definitions, "definitions",
+			x.Token == token.ISA || internal.IsDefinition(x.Label))
 		check(n, i.Data, "regular fields", internal.IsRegularField(x))
 		check(n, constraints, "optional fields", x.Optional != token.NoPos)
 

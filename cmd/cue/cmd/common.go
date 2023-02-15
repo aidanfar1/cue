@@ -463,6 +463,9 @@ func (p *buildPlan) getDecoders(b *build.Instance) (schemas, values []*decoderIn
 			// Needs to be decoded after any schema.
 			values = append(values, &decoderInfo{f, nil})
 			continue
+		case build.XML:
+			return schemas, values, errors.Newf(token.NoPos,
+				"Darshan: XML Decoding not implemented")
 		default:
 			return schemas, values, errors.Newf(token.NoPos,
 				"unsupported encoding %q", f.Encoding)
@@ -664,6 +667,7 @@ func parseArgs(cmd *Command, args []string, cfg *config) (p *buildPlan, err erro
 	if len(p.expressions) > 1 {
 		p.encConfig.Stream = true
 	}
+	
 	return p, nil
 }
 

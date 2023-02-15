@@ -924,15 +924,6 @@ func (x *LetReference) resolve(ctx *OpContext, state VertexStatus) *Vertex {
 	//
 	//     In other words, a Vertex is not necessarily erroneous when a let
 	//     field contained in that Vertex is erroneous.
-
-	// TODO(order): Do not finalize? Although it is safe to finalize a let
-	// by itself, it is not necessarily safe, at this point, to finalize any
-	// references it makes. Originally, let finalization was requested to
-	// detect cases where multi-mode should be enabled. With the recent compiler
-	// changes, though, this should be detected statically. Leave this on for
-	// now, though, as it is not entirely clear it is fine to remove this.
-	// We can reevaluate this once we have redone some of the planned order of
-	// evaluation work.
 	ctx.Unify(arc, Finalized)
 	b, ok := arc.BaseValue.(*Bottom)
 	if !arc.MultiLet && !ok {
@@ -965,17 +956,6 @@ func (x *LetReference) resolve(ctx *OpContext, state VertexStatus) *Vertex {
 		e.cache[key] = n
 		nc := n.getNodeContext(ctx, 0)
 		nc.hasNonCycle = true // Allow a first cycle to be skipped.
-
-		// Parents cannot add more conjuncts to a let expression, so set of
-		// conjuncts is always complete.
-		//
-		// NOTE(let finalization): as this let expression is not recorded as
-		// a subfield within its parent arc, setParentDone will not be called
-		// as part of normal processing. The same is true for finalization.
-		// The use of setParentDone has the additional effect that the arc
-		// will be finalized where it is needed. See the namesake NOTE for the
-		// location where this is triggered.
-		n.setParentDone()
 	}
 	return v.(*Vertex)
 }

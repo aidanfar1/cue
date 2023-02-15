@@ -99,6 +99,7 @@ func (b *buildPlan) placeOrphans(i *build.Instance, a []*decoderInfo) error {
 
 		// Filter only need to filter files that can stream:
 		for ; !d.Done(); d.Next() {
+			// DarshanNote convert file to AST File using decoder
 			if f := d.File(); f != nil {
 				f.Filename = newName(d.Filename(), 0)
 				objs = append(objs, f)

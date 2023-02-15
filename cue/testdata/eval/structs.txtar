@@ -3,15 +3,15 @@ import "struct"
 
 v: {a: struct.MaxFields(2) & {}}.a
 -- out/eval/stats --
-Leaks:  2
-Freed:  2
+Leaks:  1
+Freed:  3
 Reused: 0
 Allocs: 4
 Retain: 2
 
 Unifications: 4
 Conjuncts:    7
-Disjuncts:    4
+Disjuncts:    5
 -- out/eval --
 (struct){
   v: (struct){

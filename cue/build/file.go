@@ -42,6 +42,7 @@ const (
 	Protobuf    Encoding = "proto"
 	TextProto   Encoding = "textproto"
 	BinaryProto Encoding = "pb"
+	XML 		Encoding = "xml"
 
 	// TODO:
 	// TOML

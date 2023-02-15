@@ -231,6 +231,9 @@ func NewEncoder(f *build.File, cfg *Config) (*Encoder, error) {
 			return err
 		}
 
+	case build.XML:
+		return nil, fmt.Errorf("Darshan: XML Support not yet added")		
+
 	default:
 		return nil, fmt.Errorf("unsupported encoding %q", f.Encoding)
 	}
@@ -254,6 +257,7 @@ func (e *Encoder) EncodeInstance(v *cue.Instance) error {
 
 func (e *Encoder) Encode(v cue.Value) error {
 	e.autoSimplify = true
+	// Validates
 	if err := v.Validate(cue.Concrete(e.concrete)); err != nil {
 		return err
 	}
@@ -265,6 +269,7 @@ func (e *Encoder) Encode(v cue.Value) error {
 		return e.encodeFile(f, nil)
 	}
 	if e.encValue != nil {
+		// Uses the envValue created in line 108 switch statement above to encode Go value to output format
 		return e.encValue(v)
 	}
 	return e.encFile(valueToFile(v))

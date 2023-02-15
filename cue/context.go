@@ -136,10 +136,12 @@ func (c *Context) makeError(err errors.Error) Value {
 
 // BuildInstances creates a Value for each of the given instances and reports
 // the combined errors or nil if there were no errors.
+// DarshanNote Creates Cue.Value
 func (c *Context) BuildInstances(instances []*build.Instance) ([]Value, error) {
 	var errs errors.Error
 	var a []Value
 	for _, b := range instances {
+		// TODO DarshanNote Create CUE.Value Vertex from build instance
 		v, err := c.runtime().Build(nil, b)
 		if err != nil {
 			errs = errors.Append(errs, err)
@@ -245,10 +247,7 @@ func (c *Context) CompileBytes(b []byte, options ...BuildOption) Value {
 // }
 
 func (c *Context) make(v *adt.Vertex) Value {
-	opCtx := newContext(c.runtime())
-	x := newValueRoot(c.runtime(), opCtx, v)
-	adt.AddStats(opCtx)
-	return x
+	return newValueRoot(c.runtime(), newContext(c.runtime()), v)
 }
 
 // An EncodeOption defines options for the various encoding-related methods of

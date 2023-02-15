@@ -696,7 +696,7 @@ func (e *extractor) reportDecl(x *ast.GenDecl) (a []cueast.Decl) {
 					break
 				}
 
-				f, _ := e.makeField(name, definition, underlying, x.Doc, true)
+				f, _ := e.makeField(name, cuetoken.ISA, underlying, x.Doc, true)
 				a = append(a, f)
 				cueast.SetRelPos(f, cuetoken.NewSection)
 
@@ -983,18 +983,10 @@ func supportedType(stack []types.Type, t types.Type) (ok bool) {
 	return false
 }
 
-type fieldKind int
-
-const (
-	regular fieldKind = iota
-	optional
-	definition
-)
-
-func (e *extractor) makeField(name string, kind fieldKind, expr types.Type, doc *ast.CommentGroup, newline bool) (f *cueast.Field, typename string) {
+func (e *extractor) makeField(name string, kind cuetoken.Token, expr types.Type, doc *ast.CommentGroup, newline bool) (f *cueast.Field, typename string) {
 	typ := e.makeType(expr)
 	var label cueast.Label
-	if kind == definition {
+	if kind == cuetoken.ISA {
 		label = e.ident(name, true)
 	} else {
 		label = e.strLabel(name)
@@ -1005,7 +997,7 @@ func (e *extractor) makeField(name string, kind fieldKind, expr types.Type, doc 
 		cueast.SetRelPos(doc, cuetoken.NewSection)
 	}
 
-	if kind == optional {
+	if kind == cuetoken.OPTION {
 		f.Token = cuetoken.COLON
 		f.Optional = cuetoken.Blank.Pos()
 	}
@@ -1210,12 +1202,12 @@ func (e *extractor) addFields(x *types.Struct, st *cueast.StructLit) {
 			continue
 		}
 		// TODO: check referrers
-		kind := regular
+		kind := cuetoken.COLON
 		if e.isOptional(tag) {
-			kind = optional
+			kind = cuetoken.OPTION
 		}
 		if _, ok := f.Type().(*types.Pointer); ok {
-			kind = optional
+			kind = cuetoken.OPTION
 		}
 		field, cueType := e.makeField(name, kind, f.Type(), docs[i], count > 0)
 		add(field)

@@ -212,11 +212,11 @@ Leaks:  123
 Freed:  4431
 Reused: 4412
 Allocs: 142
-Retain: 720
+Retain: 693
 
 Unifications: 1799
-Conjuncts:    7517
-Disjuncts:    5086
+Conjuncts:    7513
+Disjuncts:    5078
 -- out/eval --
 (struct){
   chain: (struct){

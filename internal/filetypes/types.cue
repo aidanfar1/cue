@@ -82,6 +82,7 @@ modes: input: {
 	extensions: ".json": interpretation: *"auto" | _
 	extensions: ".yaml": interpretation: *"auto" | _
 	extensions: ".yml": interpretation:  *"auto" | _
+	extensions: ".xml": interpretation:  *"auto" | _
 }
 
 modes: export: {
@@ -152,6 +153,7 @@ extensions: {
 	".proto":     tags.proto
 	".textproto": tags.textproto
 	".textpb":    tags.textproto // perhaps also pbtxt
+	".xml":       tags.xml
 
 	// TODO: jsonseq,
 	// ".pb":        tags.binpb // binarypb
@@ -187,6 +189,7 @@ tags: {
 	proto: encoding:     "proto"
 	textproto: encoding: "textproto"
 	// "binpb":  encodings.binproto
+	xml: encoding:       "xml"
 
 	// pb is used either to indicate binary encoding, or to indicate
 	pb: *{
@@ -349,6 +352,13 @@ encodings: binarypb: {
 encodings: code: {
 	forms.schema
 	stream: false
+}
+
+encodings: xml: {
+	forms.data
+	stream:     *false | true
+	docs:       false
+	attributes: false
 }
 
 interpretations: [Name=string]: #FileInfo

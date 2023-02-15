@@ -103,17 +103,22 @@ yaml    output as YAML
 }
 
 func runExport(cmd *Command, args []string) error {
+	// TODO 9 Creating the build plan
 	b, err := parseArgs(cmd, args, &config{outMode: filetypes.Export})
 	exitOnErr(cmd, err, true)
 
+	// What is this encoder?
+	// TODO 10 Creates a Cue to <json/yaml> encoder based on b.outFile.encoding
 	enc, err := encoding.NewEncoder(b.outFile, b.encConfig)
 	exitOnErr(cmd, err, true)
 	defer enc.Close()
 
+	// Creates the AST file vertexes from the buildPlan instances
 	iter := b.instances()
 	defer iter.close()
 	for iter.scan() {
 		v := iter.value()
+		// Encodes and prints the CUE in JSON
 		err = enc.Encode(v)
 		exitOnErr(cmd, err, true)
 	}

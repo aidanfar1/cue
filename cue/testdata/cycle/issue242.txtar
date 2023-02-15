@@ -91,11 +91,11 @@ Leaks:  0
 Freed:  78
 Reused: 68
 Allocs: 10
-Retain: 18
+Retain: 9
 
 Unifications: 26
 Conjuncts:    191
-Disjuncts:    82
+Disjuncts:    79
 -- out/eval --
 (struct){
   #size: (int){ 2 }

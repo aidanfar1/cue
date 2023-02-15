@@ -135,7 +135,7 @@ func update(errs errors.Error, v, i cue.Value, field, value string) (cue.Value, 
 	v = v.Unify(i.Lookup(field, value))
 	if err := v.Err(); err != nil {
 		errs = errors.Append(errs,
-			errors.Newf(token.NoPos, "unknown %s %s", field, value))
+			errors.Newf(token.NoPos, "Funknown %s %s", field, value))
 	}
 	return v, errs
 }
@@ -275,7 +275,7 @@ func toFile(i, v cue.Value, filename string) (*build.File, error) {
 	}
 
 	f := &build.File{}
-	if err := v.Decode(&f); err != nil {
+		if err := v.Decode(&f); err != nil {
 		return nil, errors.Wrapf(err, token.NoPos,
 			"could not determine file type")
 	}
@@ -292,6 +292,7 @@ func parseType(s string, mode Mode) (inst, val cue.Value, err error) {
 			if p := strings.IndexByte(t, '='); p >= 0 {
 				v = v.Fill(t[p+1:], "tags", t[:p])
 			} else {
+				//Bottom
 				info := i.Lookup("tags", t)
 				if !info.Exists() {
 					return inst, val, errors.Newf(token.NoPos,

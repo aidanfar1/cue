@@ -261,6 +261,7 @@ func ToExpr(n ast.Node) ast.Expr {
 // ToFile converts an expression to a file.
 //
 // Adjusts the spacing of x when needed.
+// DarshanNote Convert an AST Node to an AST File
 func ToFile(n ast.Node) *ast.File {
 	switch x := n.(type) {
 	case nil:
@@ -329,6 +330,9 @@ func IsDefinition(label ast.Label) bool {
 }
 
 func IsRegularField(f *ast.Field) bool {
+	if f.Token == token.ISA {
+		return false
+	}
 	var ident *ast.Ident
 	switch x := f.Label.(type) {
 	case *ast.Alias:
